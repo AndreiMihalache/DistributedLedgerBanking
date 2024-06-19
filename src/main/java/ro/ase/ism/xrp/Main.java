@@ -4,9 +4,17 @@ import com.google.common.primitives.UnsignedInteger;
 import okhttp3.HttpUrl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.xrpl.xrpl4j.client.XrplClient;
 import org.xrpl.xrpl4j.client.faucet.FaucetClient;
 import org.xrpl.xrpl4j.client.faucet.FundAccountRequest;
+import org.xrpl.xrpl4j.codec.addresses.AddressBase58;
+import org.xrpl.xrpl4j.codec.addresses.AddressCodec;
+import org.xrpl.xrpl4j.codec.addresses.Base58;
+import org.xrpl.xrpl4j.crypto.keys.PublicKey;
 import org.xrpl.xrpl4j.crypto.signing.SingleSignedTransaction;
 import org.xrpl.xrpl4j.crypto.signing.bc.BcSignatureService;
 import org.xrpl.xrpl4j.model.client.accounts.AccountInfoRequestParams;
@@ -15,12 +23,21 @@ import org.xrpl.xrpl4j.model.client.common.LedgerIndex;
 import org.xrpl.xrpl4j.model.client.common.LedgerSpecifier;
 import org.xrpl.xrpl4j.model.client.fees.FeeResult;
 import org.xrpl.xrpl4j.model.client.ledger.LedgerRequestParams;
+import org.xrpl.xrpl4j.model.transactions.Address;
 import org.xrpl.xrpl4j.model.transactions.Payment;
+import org.xrpl.xrpl4j.model.transactions.XAddress;
 import org.xrpl.xrpl4j.model.transactions.XrpCurrencyAmount;
-import ro.ase.ism.xrp.jcconnector.JCConnector;
+import ro.ase.ism.xrp.jcconnector.JCConnectorImpl;
+import ro.ase.ism.xrp.wallet.JCardWallet;
 import ro.ase.ism.xrp.wallet.Wallet;
 
+import java.beans.Encoder;
 import java.math.BigDecimal;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.Security;
+import java.security.interfaces.ECPublicKey;
+import java.util.Arrays;
 
 public class Main {
 
@@ -28,15 +45,71 @@ public class Main {
 
 
 
-    public static void main1() {
-        JCConnector connector = new JCConnector("C:\\Software\\jcdk\\jcsimu\\samples\\client.config.properties");
-        connector.connect("localhost","9025");
-        connector.selectApplet();
-        //byte [] pub = connector.getPublicKey();
-        byte[] pubKeyBytes = connector.getPublicKey();
-        connector.disconnect();
-    }
     public static void main(String[] args) {
+
+
+        JCardWallet jcwallet = new JCardWallet( "localhost", "9025");
+
+        try {
+
+            HttpUrl rippledUrl = HttpUrl.get("https://s.altnet.rippletest.net:51234/");
+            logger.info("Constructing an XrplClient connected to " + rippledUrl);
+            XrplClient xrplClient = new XrplClient(rippledUrl);
+
+
+            FeeResult feeResult = xrplClient.fee();
+            XrpCurrencyAmount transactionFee = feeResult.drops().openLedgerFee();
+
+            LedgerIndex validatedLedger = xrplClient.ledger(
+                            LedgerRequestParams.builder()
+                                    .ledgerSpecifier(LedgerSpecifier.VALIDATED)
+                                    .build()
+                    )
+                    .ledgerIndex()
+                    .orElseThrow(() -> new RuntimeException("LedgerIndex not available."));
+
+            UnsignedInteger lastLedgerSequence = validatedLedger.plus(UnsignedInteger.valueOf(4)).unsignedIntegerValue();
+
+            Wallet wallet1 = new Wallet("Agent1EC");
+            AccountInfoRequestParams requestParamsWallet1 = AccountInfoRequestParams.of(wallet1.getClassicAddress());
+            AccountInfoResult initialWallet1 = xrplClient.accountInfo(requestParamsWallet1);
+            logger.info(initialWallet1);
+
+            AccountInfoRequestParams requestParamsJc = AccountInfoRequestParams.of(jcwallet.getClassicAddress());
+            AccountInfoResult jcWalletResult = xrplClient.accountInfo(requestParamsJc);
+            logger.info(jcWalletResult);
+
+
+            Payment payment = Payment.builder()
+                    .account(jcwallet.getClassicAddress())
+                    .amount(XrpCurrencyAmount.ofXrp(BigDecimal.valueOf(10)))
+                    .destination(wallet1.getClassicAddress())
+                    .sequence(jcWalletResult.accountData().sequence())
+                    .fee(transactionFee)
+                    .signingPublicKey(jcwallet.getPublicKey())
+                    .lastLedgerSequence(lastLedgerSequence)
+                    .build();
+
+
+            SingleSignedTransaction<Payment> signedTransaction = jcwallet.sign(payment);
+            xrplClient.submit(signedTransaction);
+
+            AccountInfoResult finalNormal = xrplClient.accountInfo(requestParamsWallet1);
+            logger.info(finalNormal);
+
+            AccountInfoResult finalJC = xrplClient.accountInfo(requestParamsJc);
+            logger.info(finalJC);
+
+
+
+        }
+        catch (Exception e)
+        {
+           e.printStackTrace();
+        }
+    }
+    public static void main1(String[] args) {
+
 
         Wallet wallet1 = new Wallet("Agent1EC");
         logger.info("Classic Address Wallet 1: " + wallet1.getClassicAddress());
@@ -53,9 +126,9 @@ public class Main {
 
         //Creates account and funds it
 
-        FaucetClient faucetClient = FaucetClient.construct(HttpUrl.get("https://faucet.altnet.rippletest.net"));
+        /*FaucetClient faucetClient = FaucetClient.construct(HttpUrl.get("https://sidechain-net2.devnet.rippletest.net:51234/"));
             faucetClient.fundAccount(FundAccountRequest.of(wallet1.getClassicAddress()));
-            faucetClient.fundAccount(FundAccountRequest.of(wallet2.getClassicAddress()));
+            faucetClient.fundAccount(FundAccountRequest.of(wallet2.getClassicAddress()));*/
 
         AccountInfoRequestParams requestParamsWallet1 = AccountInfoRequestParams.of(wallet1.getClassicAddress());
         AccountInfoResult initialWallet1 = xrplClient.accountInfo(requestParamsWallet1);
@@ -102,7 +175,7 @@ public class Main {
 
         }
         catch (Exception e){
-            e.printStackTrace();
+            logger.info(e.toString());
         }
 
     }
