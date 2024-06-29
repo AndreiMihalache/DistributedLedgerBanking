@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script th:src="@{/js/script.js}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <span>Hello, <span th:text="${username}">User</span></span>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="btn btn-primary">LOGOUT</button>
+        </form>
+    </div>
+
+    <div class="content">
+        <div class="left-panel">
+            <h3>P2P Ripple</h3>
+            <div class="status">
+                <div class="status-indicator" th:classappend="${cardConnected} ? 'connected' : 'disconnected'"></div>
+                <span th:text="${cardConnected} ? 'Card connected' : 'Card not connected'"></span>
+            </div>
+            <p>Card Address: <span th:text="${cardAddress}">CardAddress</span></p>
+            <p>Balance: <span th:text="${balance}">Balance</span></p>
+
+            <form th:action="@{/transaction}" method="post">
+                <div class="form-group">
+                    <label for="toAddress">Destination:</label>
+                    <input type="text" id="toAddress" name="toAddress" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" step="0.01" id="amount" name="amount" required class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+
+        <div class="right-panel">
+            <h3>Banking</h3>
+            <p>KYC: <span th:text="${kycStatus} ? 'Enrolled' : 'Not Enrolled'">not Enrolled</span></p>
+            <div class="bank-list">
+                <div class="bank-item" th:each="bank : ${banks}">
+                    <span th:text="${bank}">Bank</span>
+                    <button th:if="${!kycStatus}" th:text="'Enroll'" th:attr="onclick='enrollBank(\'' + ${bank} + '\')'" class="btn btn-secondary">Enroll</button>
+                </div>
+            </div>
+
+            <h3>Smart contracts:</h3>
+            <div class="contract-list">
+                <div class="contract-item" th:each="contract : ${smartContracts}">
+                    <span th:text="'SMART CONTRACT ' + ${contract.id}">SMART CONTRACT</span>
+                    <span th:text="${contract.bank}">Bank</span>
+                    <button class="btn btn-primary">USE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

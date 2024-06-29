@@ -1,7 +1,6 @@
 package ro.ase.ism.xrp.jcconnector;
 
 
-import com.oracle.javacard.ams.AMService;
 import com.sun.javacard.apduio.Apdu;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;

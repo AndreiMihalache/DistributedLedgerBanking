@@ -1,0 +1,93 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #ccc;
+}
+
+.header .logout-form {
+    margin: 0;
+}
+
+.content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.left-panel, .right-panel {
+    padding: 20px;
+    background-color: #b0c4de;
+    margin: 10px;
+}
+
+.left-panel {
+    flex: 1;
+}
+
+.right-panel {
+    flex: 1;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+}
+
+.status .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.status.connected {
+    background-color: green;
+}
+
+.status.disconnected {
+    background-color: red;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.bank-list, .contract-list {
+    margin-top: 10px;
+}
+
+.bank-item, .contract-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.btn {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
