@@ -36,6 +36,7 @@ public class UserController {
         //BigDecimal balance = cardConnected ? javacardService.getBalance(user.getRippleAddress()) : BigDecimal.ZERO;
         BigDecimal balance = BigDecimal.ZERO;
 
+        model.addAttribute("username", user.getUsername());
         model.addAttribute("cardConnected", cardConnected);
         model.addAttribute("balance", balance);
         //model.addAttribute("banks", kycService.getAvailableBanks());

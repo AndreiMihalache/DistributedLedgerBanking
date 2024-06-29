@@ -98,27 +98,6 @@ public class JCardWallet {
             this.classicAddress = this.publicKey.deriveAddress();
             this.xAddress = AddressCodec.getInstance().classicAddressToXAddress(this.classicAddress, true);
             Security.removeProvider("BC");
-            /*byte[] sha1 = sha256.digest(keybytes);
-            byte[] ripe1 = ripemd160.digest(sha1);
-            byte[] payload = new byte[ripe1.length+1];
-            payload[0] = 0x00;
-            System.arraycopy(ripe1,0,payload,1,ripe1.length);
-            sha256.reset();
-            byte[] sha2 = sha256.digest(payload);
-            sha256.reset();
-            byte[] sha3 = sha256.digest(sha2);
-            byte[] checksum = Arrays.copyOfRange(sha3,0,4);
-            byte[] byteAddress = new byte[payload.length+checksum.length];
-            System.arraycopy(payload,0,byteAddress,0, payload.length);
-            System.arraycopy(checksum, 0, byteAddress, payload.length, checksum.length);
-            String b58Address = Base58.encode(byteAddress);
-            Address address = Address.of(b58Address);
-            this.setClassicAddress(address);
-            address.validateAddress();
-            XAddress xAddress = AddressCodec.getInstance().classicAddressToXAddress(address, true);
-            this.setXAddress(xAddress);*/
-            Security.removeProvider("BC");
-
         }
         catch(Exception e)
         {
@@ -143,8 +122,6 @@ public class JCardWallet {
         }
         if(!hasAccount)
         {
-            //In production, fund account with minimum requested balance in mainnet receiving a transaction.
-
             FaucetClient faucetClient = FaucetClient.construct(HttpUrl.get("https://faucet.altnet.rippletest.net"));
             faucetClient.fundAccount(FundAccountRequest.of(this.getClassicAddress()));
         }

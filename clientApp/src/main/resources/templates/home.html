@@ -3,12 +3,16 @@
 <head>
     <title>Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css}" />
+    <script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js}"></script>
+    <script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/script.js}"></script>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <span>Hello, <span th:text="${username}">User</span></span>
+        <span>Hello, <span th:text="${#authentication.name}">User</span></span>
         <form th:action="@{/logout}" method="post" class="logout-form">
             <button type="submit" class="btn btn-primary">LOGOUT</button>
         </form>
@@ -21,20 +25,26 @@
                 <div class="status-indicator" th:classappend="${cardConnected} ? 'connected' : 'disconnected'"></div>
                 <span th:text="${cardConnected} ? 'Card connected' : 'Card not connected'"></span>
             </div>
-            <p>Card Address: <span th:text="${cardAddress}">CardAddress</span></p>
-            <p>Balance: <span th:text="${balance}">Balance</span></p>
+            <button class="btn btn-primary" onclick="openConnectModal()">Connect to card</button>
 
-            <form th:action="@{/transaction}" method="post">
-                <div class="form-group">
-                    <label for="toAddress">Destination:</label>
-                    <input type="text" id="toAddress" name="toAddress" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="amount">Amount:</label>
-                    <input type="number" step="0.01" id="amount" name="amount" required class="form-control">
-                </div>
-                <button type="submit" class="btn btn-primary">Send</button>
-            </form>
+            <div th:if="${cardConnected}">
+                <p>Card Address: <span th:text="${publicKey}">CardAddress</span></p>
+                <p>Balance: <span th:text="${balance}">Balance</span></p>
+                <p>Host: <span th:text="${host}">Host</span></p>
+                <p>Port: <span th:text="${port}">Port</span></p>
+
+                <form th:action="@{/transaction}" method="post">
+                    <div class="form-group">
+                        <label for="toAddress">Destination:</label>
+                        <input type="text" id="toAddress" name="toAddress" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" step="0.01" id="amount" name="amount" required class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
         </div>
 
         <div class="right-panel">
@@ -54,6 +64,48 @@
                     <span th:text="${contract.bank}">Bank</span>
                     <button class="btn btn-primary">USE</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Connect Modal -->
+<div class="modal fade" id="connectModal" tabindex="-1" aria-labelledby="connectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="connectModalLabel">Connect to Simulator</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="connectForm" th:action="@{/connect}" method="post">
+                    <div class="form-group">
+                        <label for="host">Host:</label>
+                        <input type="text" id="host" name="host" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="port">Port:</label>
+                        <input type="number" id="port" name="port" required class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitConnectForm()">Connect</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Please wait while we connect to the card...</p>
             </div>
         </div>
     </div>

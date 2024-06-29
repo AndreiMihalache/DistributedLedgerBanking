@@ -53,11 +53,11 @@ body {
     margin-right: 10px;
 }
 
-.status.connected {
+.status .connected {
     background-color: green;
 }
 
-.status.disconnected {
+.status .disconnected {
     background-color: red;
 }
 

@@ -76,7 +76,7 @@ public class CardCreation {
                     .append(new CommandAPDU(0x80,0x20,0x00,0x00))
                     .append(close);
 
-            CardTerminal t = getTerminal("socket", "127.0.0.1", "9025");
+            CardTerminal t = getTerminal("socket", "127.0.0.1", "9026");
             Card c = t.connect("*");
             List<ResponseAPDU> responses = testScript.run(c.getBasicChannel());
             c.disconnect(true);

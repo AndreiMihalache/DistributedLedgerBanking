@@ -25,3 +25,15 @@ function enrollBank(bankName) {
     document.body.appendChild(form);
     form.submit();
 }
+
+function openConnectModal() {
+    var connectModal = new bootstrap.Modal(document.getElementById('connectModal'));
+    connectModal.show();
+}
+
+function submitConnectForm() {
+    var connectForm = document.getElementById('connectForm');
+    var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    loadingModal.show();
+    connectForm.submit();
+}
