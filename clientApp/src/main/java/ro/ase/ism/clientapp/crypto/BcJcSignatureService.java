@@ -1,6 +1,7 @@
 package ro.ase.ism.clientapp.crypto;
 
 import org.bouncycastle.asn1.*;
+import org.springframework.stereotype.Service;
 import org.xrpl.xrpl4j.codec.addresses.UnsignedByteArray;
 import org.xrpl.xrpl4j.codec.binary.XrplBinaryCodec;
 import org.xrpl.xrpl4j.crypto.HashingUtils;
@@ -13,6 +14,7 @@ import ro.ase.ism.clientapp.connector.JCConnector;
 
 import java.math.BigInteger;
 
+@Service
 public class BcJcSignatureService extends AbstractJCSignatureService<JCConnector> implements JCSignatureService<JCConnector> {
 
 
@@ -57,11 +59,6 @@ public class BcJcSignatureService extends AbstractJCSignatureService<JCConnector
     @Override
     protected boolean ecDsaVerify(PublicKey publicKey, UnsignedByteArray transactionBytes, Signature signature) {
         return false;
-    }
-
-    @Override
-    public PublicKey getPublicKey(JCConnector connector) {
-        return null;
     }
 
 

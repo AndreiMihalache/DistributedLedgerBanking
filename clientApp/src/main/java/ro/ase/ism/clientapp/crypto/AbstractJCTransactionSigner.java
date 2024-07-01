@@ -15,7 +15,7 @@ public abstract class AbstractJCTransactionSigner<J extends JCConnector> impleme
     private final SignatureUtils signatureUtils;
 
     public AbstractJCTransactionSigner(final SignatureUtils signatureUtils){
-        this.signatureUtils = (SignatureUtils) Objects.requireNonNull(signatureUtils);
+        this.signatureUtils = Objects.requireNonNull(signatureUtils);
     }
 
     @Override

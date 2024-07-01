@@ -24,10 +24,6 @@ public abstract class AbstractJCSignatureService<J extends JCConnector> implemen
             protected Signature ecDsaSign(J connector, UnsignedByteArray signableTransactionBytes) {
                 return AbstractJCSignatureService.this.ecDsaSign(connector, signableTransactionBytes);
             }
-
-            public PublicKey getPublicKey(J connector) {
-                return AbstractJCSignatureService.this.getPublicKey(connector);
-            }
         };
 
         this.abstractTransactionVerifier = new AbstractJCTransactionVerifier(signatureUtils) {
@@ -62,7 +58,5 @@ public abstract class AbstractJCSignatureService<J extends JCConnector> implemen
     protected abstract Signature ecDsaSign(J connector, UnsignedByteArray signableTransactionBytes);
 
     protected abstract boolean ecDsaVerify(PublicKey publicKey, UnsignedByteArray transactionBytes, Signature signature);
-
-    public abstract PublicKey getPublicKey(J connector);
 
 }

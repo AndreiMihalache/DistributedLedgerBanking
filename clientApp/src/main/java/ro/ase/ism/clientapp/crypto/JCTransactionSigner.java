@@ -9,8 +9,6 @@ import ro.ase.ism.clientapp.connector.JCConnector;
 
 public interface JCTransactionSigner<J extends JCConnector> {
 
-    PublicKey getPublicKey(J connector);
-
     <T extends Transaction> SingleSignedTransaction<T> sign(J connector,T transaction);
 
     Signature sign(J connector, UnsignedClaim unsignedClaim);

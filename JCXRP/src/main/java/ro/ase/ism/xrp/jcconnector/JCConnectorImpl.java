@@ -10,6 +10,8 @@ import javax.smartcardio.*;
 import java.net.InetSocketAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -147,6 +149,7 @@ public class JCConnectorImpl implements JCConnector {
         if (connectivityType.equals("socket")) {
             String ipaddr = connectionParams[1];
             String port = connectionParams[2];
+            Arrays.stream(Security.getProviders()).map(p ->p.getName()).forEach(p ->logger.info(p));
             tf = TerminalFactory.getInstance("SocketCardTerminalFactoryType",
                     List.of(new InetSocketAddress(ipaddr, Integer.parseInt(port))),
                     "SocketCardTerminalProvider");

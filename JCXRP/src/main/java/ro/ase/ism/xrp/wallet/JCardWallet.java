@@ -1,6 +1,7 @@
 package ro.ase.ism.xrp.wallet;
 
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,9 +41,8 @@ import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 
 @Data
+@Log4j2
 public class JCardWallet {
-
-    protected static final Logger logger = LogManager.getLogger();
 
     private Address classicAddress;
     private XAddress xAddress;
@@ -85,7 +85,7 @@ public class JCardWallet {
 
             ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256k1");
 
-            org.bouncycastle.math.ec.ECPoint wPoint = spec.getCurve().decodePoint(pubKeyBytes);
+            ECPoint wPoint = spec.getCurve().decodePoint(pubKeyBytes);
             ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(wPoint, spec);
             KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
             ECPublicKey bcPublicKey = (ECPublicKey) keyFactory.generatePublic(publicKeySpec);
@@ -101,7 +101,7 @@ public class JCardWallet {
         }
         catch(Exception e)
         {
-            logger.info(e.toString());
+            log.info(e.toString());
         }
     }
 
@@ -110,12 +110,12 @@ public class JCardWallet {
         boolean hasAccount = true;
         try{
             HttpUrl rippledUrl = HttpUrl.get("https://s.altnet.rippletest.net:51234/");
-            logger.info("Constructing an XrplClient connected to " + rippledUrl);
+            log.info("Constructing an XrplClient connected to " + rippledUrl);
             XrplClient xrplClient = new XrplClient(rippledUrl);
 
             AccountInfoRequestParams requestParamsJc = AccountInfoRequestParams.of(this.getClassicAddress());
             AccountInfoResult jcWalletResult = xrplClient.accountInfo(requestParamsJc);
-            logger.info("Account found");
+            log.info("Account found");
 
         } catch (JsonRpcClientErrorException e) {
             hasAccount =false;

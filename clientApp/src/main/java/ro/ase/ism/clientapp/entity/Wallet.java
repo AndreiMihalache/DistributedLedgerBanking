@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Card {
+public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

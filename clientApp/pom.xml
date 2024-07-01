@@ -90,20 +90,36 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.oracle.tools</groupId>
-            <artifactId>tools</artifactId>
+            <groupId>com.oracle.javacard</groupId>
+            <artifactId>ams</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.smartcardio</groupId>
+            <artifactId>ext</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.smartcardio</groupId>
+            <artifactId>socket</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.tools</groupId>
             <artifactId>tools</artifactId>
             <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xrpl</groupId>
+            <artifactId>xrpl4j-core</artifactId>
+            <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.xrpl</groupId>
-            <artifactId>xrpl4j-core</artifactId>
+            <artifactId>xrpl4j-client</artifactId>
             <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>

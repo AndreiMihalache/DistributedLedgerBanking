@@ -7,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import ro.ase.ism.clientapp.entity.User;
 import ro.ase.ism.clientapp.repo.UserRepository;
 
@@ -15,35 +17,30 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class UserController {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
-
-
-
         User user = userRepository.findByUsername(principal.getName()).orElseThrow();
-        //boolean cardConnected = javacardService.isCardConnected();
-        boolean cardConnected = false;
-        //BigDecimal balance = cardConnected ? javacardService.getBalance(user.getRippleAddress()) : BigDecimal.ZERO;
-        BigDecimal balance = BigDecimal.ZERO;
-
         model.addAttribute("username", user.getUsername());
-        model.addAttribute("cardConnected", cardConnected);
-        model.addAttribute("balance", balance);
-        //model.addAttribute("banks", kycService.getAvailableBanks());
 
-        //banks.add("BankA");
-        //banks.add("BankB");
-        //banks.add("BankC");
+        if (!model.containsAttribute("cardConnected")) {
+            model.addAttribute("cardConnected", false);
+        }
         model.addAttribute("banks", Arrays.asList("Bank A", "Bank B", "Bank C"));
         model.addAttribute("kycStatus", false);
         return "home";
