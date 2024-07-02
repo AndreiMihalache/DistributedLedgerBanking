@@ -10,22 +10,6 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 });
 
-function enrollBank(bankName) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/kyc';
-
-    const hiddenField = document.createElement('input');
-    hiddenField.type = 'hidden';
-    hiddenField.name = 'bank';
-    hiddenField.value = bankName;
-
-    form.appendChild(hiddenField);
-
-    document.body.appendChild(form);
-    form.submit();
-}
-
 function openConnectModal() {
     var connectModal = new bootstrap.Modal(document.getElementById('connectModal'));
     connectModal.show();
@@ -36,4 +20,25 @@ function submitConnectForm() {
     var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();
     connectForm.submit();
+}
+
+function openEnrollModal() {
+    var enrollModal = new bootstrap.Modal(document.getElementById('enrollModal'));
+    enrollModal.show();
+}
+
+function submitEnrollForm() {
+    var enrollForm = document.getElementById('enrollForm');
+    enrollForm.submit();
+}
+
+function openExecuteModal(contract) {
+    document.getElementById('contractName').value = contract;
+    var executeModal = new bootstrap.Modal(document.getElementById('executeModal'));
+    executeModal.show();
+}
+
+function submitExecuteForm() {
+    var executeForm = document.getElementById('executeForm');
+    executeForm.submit();
 }

@@ -49,21 +49,30 @@
 
         <div class="right-panel">
             <h3>Banking</h3>
-            <p>KYC: <span th:text="${kycStatus} ? 'Enrolled' : 'Not Enrolled'">not Enrolled</span></p>
-            <div class="bank-list">
-                <div class="bank-item" th:each="bank : ${banks}">
-                    <span th:text="${bank}">Bank</span>
-                    <button th:if="${!kycStatus}" th:text="'Enroll'" th:attr="onclick='enrollBank(\'' + ${bank} + '\')'" class="btn btn-secondary">Enroll</button>
-                </div>
+            <div th:if="${kycStatus == false}">
+                <button class="btn btn-primary" onclick="openEnrollModal()">Enroll in KYC</button>
             </div>
-
-            <h3>Smart contracts:</h3>
-            <div class="contract-list">
-                <div class="contract-item" th:each="contract : ${smartContracts}">
-                    <span th:text="'SMART CONTRACT ' + ${contract.id}">SMART CONTRACT</span>
-                    <span th:text="${contract.bank}">Bank</span>
-                    <button class="btn btn-primary">USE</button>
-                </div>
+            <div th:if="${kycStatus == true}">
+                <h4>Enrolled in: <span th:text="${userBank}">Bank Name</span></h4>
+                <h4>Smart Contracts:</h4>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Bank</th>
+                        <th>Contract</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="contract : ${smartContracts}">
+                        <td th:text="${userBank}"></td>
+                        <td th:text="${contract}"></td>
+                        <td>
+                            <button class="btn btn-primary" th:attr="onclick='openExecuteModal(\'' + ${contract} + '\')'">Execute</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -106,6 +115,65 @@
                     <span class="visually-hidden">Loading...</span>
                 </div>
                 <p>Please wait while we connect to the card...</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Enroll Modal -->
+<div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="enrollModalLabel">Enroll in KYC</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="enrollForm" th:action="@{/enroll}" method="post">
+                    <div class="form-group">
+                        <label for="bank">Bank:</label>
+                        <select id="bank" name="bank" class="form-control">
+                            <option th:each="bank : ${banks}" th:value="${bank.name}" th:text="${bank.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" required class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitEnrollForm()">Enroll</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Execute Contract Modal -->
+<div class="modal fade" id="executeModal" tabindex="-1" aria-labelledby="executeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="executeModalLabel">Execute Smart Contract</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="executeForm" th:action="@{/contracts/execute}" method="post">
+                    <input type="hidden" id="contractName" name="contractName" th:value="${contractName}">
+                    <input type="hidden" id="bankName" name="bankName" th:value="${userBank}">
+                    <div class="form-group">
+                        <label for="params">Parameters:</label>
+                        <input type="text" id="params" name="params" required class="form-control">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitExecuteForm()">Execute</button>
             </div>
         </div>
     </div>

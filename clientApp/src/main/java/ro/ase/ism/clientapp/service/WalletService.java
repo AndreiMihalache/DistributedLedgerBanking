@@ -1,10 +1,7 @@
 package ro.ase.ism.clientapp.service;
 
-import javacard.framework.CardRuntimeException;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xrpl.xrpl4j.crypto.keys.PublicKey;
 import org.xrpl.xrpl4j.crypto.signing.SingleSignedTransaction;
 import org.xrpl.xrpl4j.model.transactions.Payment;
 import ro.ase.ism.clientapp.connector.JCConnectorImpl;
@@ -17,11 +14,16 @@ import javax.smartcardio.CardNotPresentException;
 @Log4j2
 public class WalletService {
 
-    @Autowired
-    private JCConnectorImpl jcConnector;
 
-    @Autowired
-    private BcJcSignatureService signatureService;
+    private final JCConnectorImpl jcConnector;
+
+    private final BcJcSignatureService signatureService;
+
+    public WalletService(JCConnectorImpl jcConnector, BcJcSignatureService signatureService) {
+        this.jcConnector = jcConnector;
+        this.signatureService = signatureService;
+    }
+
     public boolean init(String host, String port)
     {
         return jcConnector.init(host, port);
@@ -48,4 +50,8 @@ public class WalletService {
             return null;
         }
     }
+
+    public String getCurrentHost(){return jcConnector.getHost();}
+
+    public String getCurrentPort(){return jcConnector.getPort();}
 }
