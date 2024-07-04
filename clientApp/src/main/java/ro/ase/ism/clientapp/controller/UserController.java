@@ -4,14 +4,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ro.ase.ism.clientapp.entity.Bank;
 import ro.ase.ism.clientapp.entity.User;
 import ro.ase.ism.clientapp.service.BankService;
 import ro.ase.ism.clientapp.service.FabricService;
+import ro.ase.ism.clientapp.service.SmartContractInfo;
 import ro.ase.ism.clientapp.service.UserService;
 
 import java.lang.reflect.Array;
@@ -49,14 +47,17 @@ public class UserController {
 
         boolean kycStatus = user.getBank()!=null && fabricService.checkEnrollment(user.getBank(), user.getEmail());
 
+        List<Bank> banks = bankService.findAll();
+
+
         if(kycStatus)
         {
             model.addAttribute("kycStatus", true);
             model.addAttribute("userBank", user.getBank());
-            model.addAttribute("smartContracts", Arrays.asList("Contract1","Contract2","Contract3"));
+            List<SmartContractInfo> smartContracts = fabricService.getSmartContracts(user.getEmail());
+            model.addAttribute("smartContracts", smartContracts);
         }
         else{
-            List<Bank> banks = bankService.findAll();
             model.addAttribute("banks", banks);
             model.addAttribute("kycStatus", false);
         }
@@ -86,5 +87,6 @@ public class UserController {
         userService.registerUser(user);
         return "redirect:/login";
     }
+
 
 }

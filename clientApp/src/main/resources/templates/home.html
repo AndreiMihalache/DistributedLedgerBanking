@@ -65,10 +65,10 @@
                     </thead>
                     <tbody>
                     <tr th:each="contract : ${smartContracts}">
-                        <td th:text="${userBank}"></td>
-                        <td th:text="${contract}"></td>
+                        <td th:text="${contract.bankName}"></td>
+                        <td th:text="${contract.contractName}"></td>
                         <td>
-                            <button class="btn btn-primary" th:attr="onclick='openExecuteModal(\'' + ${contract} + '\')'">Execute</button>
+                            <button class="btn btn-primary" th:attr="onclick='openFunctionModal(\'' + ${contract.bankName} + '\', \'' + ${contract.channelName} + '\')'">Execute</button>
                         </td>
                     </tr>
                     </tbody>
@@ -78,7 +78,6 @@
     </div>
 </div>
 
-<!-- Connect Modal -->
 <div class="modal fade" id="connectModal" tabindex="-1" aria-labelledby="connectModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -106,20 +105,18 @@
     </div>
 </div>
 
-<!-- Loading Modal -->
 <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body text-center">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
                 </div>
                 <p>Please wait while we connect to the card...</p>
             </div>
         </div>
     </div>
 </div>
-<!-- Enroll Modal -->
+
 <div class="modal fade" id="enrollModal" tabindex="-1" aria-labelledby="enrollModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -153,30 +150,37 @@
     </div>
 </div>
 
-<!-- Execute Contract Modal -->
-<div class="modal fade" id="executeModal" tabindex="-1" aria-labelledby="executeModalLabel" aria-hidden="true">
+<div class="modal fade" id="functionModal" tabindex="-1" aria-labelledby="functionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="executeModalLabel">Execute Smart Contract</h5>
+                <h5 class="modal-title" id="functionModalLabel">Execute Function</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form id="executeForm" th:action="@{/contracts/execute}" method="post">
-                    <input type="hidden" id="contractName" name="contractName" th:value="${contractName}">
-                    <input type="hidden" id="bankName" name="bankName" th:value="${userBank}">
+                <form id="functionForm" th:action="@{/contracts/execute}" method="post">
+                    <input type="hidden" id="functionBankName" name="bankName">
+                    <input type="hidden" id="functionChannelName" name="channelName">
                     <div class="form-group">
-                        <label for="params">Parameters:</label>
-                        <input type="text" id="params" name="params" required class="form-control">
+                        <label for="function">Function:</label>
+                        <select id="function" name="function" class="form-control" onchange="loadFunctionForm()">
+                            <option value="createAsset">Create Asset</option>
+                            <option value="readAsset">Read Asset</option>
+                            <option value="readAllAssets">Read All Assets</option>
+                        </select>
+                    </div>
+                    <div id="functionParameters">
+                        <!-- Dynamically generated input fields for parameters will go here -->
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="submitExecuteForm()">Execute</button>
+                <button type="button" class="btn btn-primary" onclick="submitFunctionForm()">Execute</button>
             </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>

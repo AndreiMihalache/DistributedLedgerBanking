@@ -1,6 +1,7 @@
 package ro.ase.ism.clientapp.service;
 
 import io.grpc.*;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.hyperledger.fabric.client.Gateway;
 import org.hyperledger.fabric.client.identity.*;
@@ -34,6 +35,7 @@ public class FabricIdentityService {
     private final Map<String, Gateway.Builder> gateways = new HashMap<>();
 
     private final Map<String, String> banks = new HashMap<>();
+    @Getter
     private final Map<String, List<String>> channels = new HashMap<>();
 
     private final Map<String,String> peerEndpoints = new HashMap<>();
@@ -130,6 +132,5 @@ public class FabricIdentityService {
     public List<String> getBankChannels(String bankName) {
         return channels.get(bankName.toLowerCase());
     }
-
 
 }
